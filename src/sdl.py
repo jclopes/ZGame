@@ -3,25 +3,31 @@
 import sys
 import sdl2.ext
 from zgame import Game
-from graphics import Graphics
+from inputManager import InputManager
+from graphicsManager import GraphicManager
 
 # run in terminal: python sdl.py ../play_file.log 
 
 def main():
  
-    # create the graphics
-    graphics = Graphics()
-    graphics.drawTest()
+    # create the managers
+    gMngr = GraphicManager()
+    iMngr = InputManager(gMngr)
 
-    print "aaa"
-    # cread file with input
+    print "starting game"
+    # create file with input
     playFile = open(sys.argv[1], 'r')
+    # start the managers
+    gMngr.start()
+    iMngr.start()
+
     # create game and start it
-    game = Game(playFile)
+    game = Game(iMngr, gMngr, playFile)
     game.run()
 
-    # close graphics
-    graphics.close()
+    # close the managers
+    gMngr.stop()
+    iMngr.stop()
 
 if __name__ == '__main__':
     sys.exit(main())
