@@ -7,10 +7,11 @@ from player import Player, Direction, Position
 
 class Game(object):
 
-    def __init__(self, inputManager, graphicsManager, filedesc):
+    def __init__(self, inputManager, updateManager, graphicsManager, filedesc):
         self.world = World()
         self.worldView = WorldView(self.world)
         self.iMngr = inputManager
+        self.uMngr = updateManager
         self.gMngr = graphicsManager
         self.connection = filedesc
         self.isRunning = True
@@ -26,6 +27,7 @@ class Game(object):
             #isRunning = not self.iMngr.closedGame()
 
             # update state of the game
+            self.uMngr.updateGame(self)
             #newState = self.readState()
             #self.world.update(newState)
 

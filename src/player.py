@@ -3,14 +3,14 @@ class Player(object):
     def __init__(self, direction, position):
         self.currentDir = direction
         self.currentPos = position
-        self.porposedDir = None
+        self.proposedDir = None
         self.proposedPos = None
 
     def updatePosition(self, direction, position):
     	"""Updates position and direction erasing the proposed one if any"""
         self.currentDir = direction
         self.currentPos = position
-        self.porposedDir = None
+        self.proposedDir = None
         self.proposedPos = None
 
     def updateStats(self, direction, position):
@@ -19,8 +19,8 @@ class Player(object):
 
     def proposeMove(self, direction, position):
     	"""Proposes a move for the player"""
-        self.direction = direction
-        self.position = position
+        self.proposedDir = direction
+        self.proposedPos = position
 
 class Direction(object):
     """represents the allowed move directions"""
@@ -48,12 +48,12 @@ class Position(object):
     	self.y = y
 
     def moveTo(self, direction):
-		if direction == Direction.UP:
-			self.y -= self.STEP
-		elif direction == Direction.DOWN:
-			self.y += self.STEP
-		elif direction == Direction.LEFT:
-			self.x -= self.STEP
-		elif direction == Direction.RIGHT:
-			self.x += self.STEP
+        if direction == Direction.UP:
+            self.y -= self.STEP
+        elif direction == Direction.DOWN:
+            self.y += self.STEP
+        elif direction == Direction.LEFT:
+            self.x -= self.STEP
+        elif direction == Direction.RIGHT:
+            self.x += self.STEP
 
