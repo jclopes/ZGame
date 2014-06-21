@@ -6,25 +6,33 @@ import struct
 
 from net_protocol import MSG_HEADER_SIZE, MSG_MAX_SIZE
 from net_protocol import MSGT_CONNECTREQ, MSGT_GAMESTATE
-
+from net_protocol import message_connect, MSGT_CONNECTACPT
 
 def main(srvAddr, srvPort):
     s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-    msg = bytearray()
-    msg.extend(struct.pack('!HHI', MSGT_CONNECTREQ, 0, 0))
+    msg = message_connect()
     s.sendto(msg, (srvAddr, srvPort))
 
+    msgCounter = 1
     while True:
         buff, addr = s.recvfrom(MSG_MAX_SIZE)
         header = buff[:MSG_HEADER_SIZE]
         data = buff[MSG_HEADER_SIZE:]
-        msgType, lenght, msgId = struct.unpack('!HHI', header)
+        protoVerId, msgType, msgId = struct.unpack('!BBH', header)
+        if msgId > msgCounter:
+            print "package loss: %s" % (msgId - msgCounter)
+            print msgId
+            print msgCounter
+        msgCounter = msgId+1
+        if msgType == MSGT_CONNECTACPT:
+            (_newSrvAddr, srvPort) = addr
+            print "updated server port to: %s" % srvPort
         if msgType == MSGT_GAMESTATE:
             print data
         else:
             print "Unknown message type!"
+            print protoVerId
             print msgType
-            print lenght
             print msgId
             print buff
 
