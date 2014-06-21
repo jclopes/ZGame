@@ -1,4 +1,5 @@
 import sys
+import sdl2
 import sdl2.ext
 
 class GraphicManager(object):
@@ -21,7 +22,7 @@ class GraphicManager(object):
         processor = sdl2.ext.TestEventProcessor()
         processor.run(window)
 
-    def drawTest2(self, game):
+    def drawTest2(self, leftTime, game):
         factory = sdl2.ext.SpriteFactory(sdl2.ext.SOFTWARE)
         sprite = factory.from_image(self.RESOURCES.get_path("player.bmp"))
         currentPos = game.ownPlayer.currentPos
@@ -29,9 +30,23 @@ class GraphicManager(object):
         spriterenderer = factory.create_sprite_render_system(self.window)
         spriterenderer.render(sprite)
         #self.window.refresh()
+        if leftTime > 0: 
+            #print "got left time", 
+            #print leftTime
+            pass
 
     def start(self):
-        sdl2.ext.init()
+        sdl2.SDL_Init(sdl2.SDL_INIT_VIDEO)
+        sdl2.SDL_Init(sdl2.SDL_INIT_JOYSTICK)
+        #set joystick if there is any
+        if sdl2.joystick.SDL_NumJoysticks() > 0:
+            print "found joystick. getting first one out of",
+            print sdl2.joystick.SDL_NumJoysticks()
+            joystick = sdl2.SDL_JoystickOpen(0)
+            print [sdl2.joystick.SDL_JoystickNumAxes(joystick),
+                sdl2.joystick.SDL_JoystickNumBalls(joystick),
+                sdl2.joystick.SDL_JoystickNumButtons(joystick),
+                sdl2.joystick.SDL_JoystickNumHats(joystick)]
         self.window = sdl2.ext.Window("ZGame", size=(640, 480))
         self.window.show()
 

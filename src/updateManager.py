@@ -9,8 +9,9 @@ class UpdateManager(object):
     def updateGame(self, game):
         # TODO: restrict move to field size and players around
         player = game.ownPlayer
-        if player.proposedPos != None:
-            player.updatePosition(player.proposedDir, player.proposedPos)
+        if player.proposedMove != None: #TODO pass to event
+            player.currentPos.applyMove(player.proposedMove)
+            player.proposedMove = None
 
     def start(self):
         pass
