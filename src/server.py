@@ -59,7 +59,7 @@ class ClientProxy():
                     self.lastHbt = msgId
                     self.mesure_lag(msgId)
 
-    def mesure_lag(msgId):
+    def mesure_lag(self, msgId):
         t1 = time.time()
         if msgId in self.msg_metrics:
             self.lag = t1 - self.msg_metrics.pop(msgId)
@@ -147,6 +147,7 @@ class ClientManager(object):
             if cli is not None:
                 cli.receive()
 
+    # TODO: refactor this into the net_protocol.py
     def receive_connections(self):
         buff = None
         buff, addr = receive_msg(self.sock)

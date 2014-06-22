@@ -5,8 +5,9 @@ import socket
 import struct
 
 from net_protocol import MSG_HEADER_SIZE, MSG_MAX_SIZE
-from net_protocol import MSGT_CONNECTREQ, MSGT_GAMESTATE
-from net_protocol import message_connect, MSGT_CONNECTACPT
+from net_protocol import MSGT_GAMESTATE, MSGT_CONNECTACPT
+from net_protocol import message_connect, message_heartbeat
+
 
 def main(srvAddr, srvPort):
     s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
@@ -29,6 +30,10 @@ def main(srvAddr, srvPort):
             print "updated server port to: %s" % srvPort
         if msgType == MSGT_GAMESTATE:
             print data
+            msg = message_heartbeat(msgId)
+            s.sendto(msg, (srvAddr, srvPort))
+            print "sent heartbeat"
+
         else:
             print "Unknown message type!"
             print protoVerId
