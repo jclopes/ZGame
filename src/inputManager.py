@@ -2,8 +2,8 @@ import sys
 import sdl2.ext
 from graphicsManager import GraphicManager
 from player import Player, Direction, Position
-from event_manager import EventPlayerMove
-
+from event_manager import EventPlayerMove, EventPlayerDirect
+import pdb
 
 class InputManager(object):
     """processes the user input"""
@@ -17,6 +17,7 @@ class InputManager(object):
         self.gMngr = graphicsManager 
         self.middlePoint = self.MOVE_MIDDLE_VALUE
         self.movePlayer = [self.middlePoint, self.middlePoint]
+        self.directPlayer = [2, 0] #East
 
     def processUserInput(self, game):
         # TODO: issue. pass to generate events
@@ -58,16 +59,21 @@ class InputManager(object):
                     pass
                 elif event.jaxis.axis == 3:
                     #right joystick is axis 3 (h) & 4 (v);
-                    pass
+                    self.directPlayer[0] = self.discreteValue(event.jaxis.value)
                 elif event.jaxis.axis == 4:
-                    pass
+                    self.directPlayer[1] = self.discreteValue(event.jaxis.value)
                 elif event.jaxis.axis == 5:
                     #right trigger is axis 5
                     pass
             elif event.type == sdl2.SDL_JOYBUTTONDOWN:
-                #print "joy DOWN...", 
-                #print event.button. this doesn't work. it's a mousebutton object, not an id.
-                pass
+                #id of button located in event.button.which
+                #A 256, B 257, X 258, Y 259
+                #LB 260 LR 261
+                #joystick left click 262 right click 263
+                #start 264, x 265, back 266
+                #up 267 down 268 left 269 right 270
+                print "joy DOWN...", 
+                print event.button.which #this doesn't work. it's a mousebutton object, not an id.
             elif event.type == sdl2.SDL_JOYBUTTONUP:
                 #print "joy UP!"
                 pass
@@ -86,6 +92,10 @@ class InputManager(object):
             proposedMove = (self.movePlayer[0], self.movePlayer[1])
             self.eMngr.addEvent(EventPlayerMove(player, proposedMove))
         # orientate the player
+        if self.directPlayer[0] != 0 or self.directPlayer[1] != 0: # if there is a position
+            player = game.ownPlayer
+            proposedDir = Direction((self.directPlayer[0], self.directPlayer[1]))
+            self.eMngr.addEvent(EventPlayerDirect(player, proposedDir))
 
     def discreteValue(self, originalValue):
         """returns a value from 0 to NUM_DIVISIONS_IN_AXIS not included"""

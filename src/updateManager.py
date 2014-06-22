@@ -18,7 +18,7 @@ class UpdateManager(object):
             if event.type == EVENT_TYPE_PLAYER_MOVE:
                 event.player.currentPos.applyMove(event.move)
             elif event.type == EVENT_TYPE_PLAYER_REDIRECT:
-                pass
+                event.player.currentDir = event.direction
 
     def start(self):
         pass

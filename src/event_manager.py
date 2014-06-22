@@ -16,11 +16,12 @@ EVENT_TYPES = [EVENT_TYPE_PLAYER_MOVE, EVENT_TYPE_PLAYER_REDIRECT, EVENT_TYPE_GA
 class EventManager(object):
     """handles the events between managers in the game"""
 
-
     def __init__(self):
         self.playerEvents = []
         self.gameEvents = []
         self.eventQueue = {
+                EVENT_SET_PLAYER : self.playerEvents,
+                EVENT_SET_GAME : self.gameEvents,
                 EVENT_TYPE_PLAYER_MOVE : self.playerEvents,
                 EVENT_TYPE_PLAYER_REDIRECT : self.playerEvents,
                 EVENT_TYPE_GAME_CLOSE : self.gameEvents
@@ -60,4 +61,12 @@ class EventPlayerMove(Event):
         super(EventPlayerMove, self).__init__(EVENT_TYPE_PLAYER_MOVE)
         self.player = player
         self.move = move
+
+class EventPlayerDirect(Event):
+    """represents an event for a player changeing position"""
+
+    def __init__(self, player, direction):
+        super(EventPlayerDirect, self).__init__(EVENT_TYPE_PLAYER_REDIRECT)
+        self.player = player
+        self.direction = direction
 
