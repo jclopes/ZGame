@@ -2,7 +2,8 @@ import sys
 
 class NetworkManager(object):
     """updates the game"""
-    def __init__(self):
+    def __init__(self, eventManager):
+        self.eMngr = eventManager 
         pass
 
     def updateGame(self, game):

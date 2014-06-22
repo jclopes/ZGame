@@ -2,6 +2,7 @@ import sys
 import sdl2.ext
 from graphicsManager import GraphicManager
 from player import Player, Direction, Position
+from event_manager import EventPlayerMove
 
 
 class InputManager(object):
@@ -9,9 +10,10 @@ class InputManager(object):
 
     #TODO take away 0 to 4, passing it to -2 to 2 instead
     NUM_DIVISIONS_IN_AXIS = 5
-    MOVE_MIDDLE_VALUE = 2 #int(round((self.NUM_DIVISIONS_IN_AXIS - 1) / 2))
+    MOVE_MIDDLE_VALUE = 2
 
-    def __init__(self, graphicsManager):
+    def __init__(self, eventManager, graphicsManager):
+        self.eMngr = eventManager 
         self.gMngr = graphicsManager 
         self.middlePoint = self.MOVE_MIDDLE_VALUE
         self.movePlayer = [self.middlePoint, self.middlePoint]
@@ -82,8 +84,7 @@ class InputManager(object):
         if self.movePlayer[0] != self.middlePoint or self.movePlayer[1] != self.middlePoint:
             player = game.ownPlayer
             proposedMove = (self.movePlayer[0], self.movePlayer[1])
-            # TODO change to generate event
-            player.proposedMove = proposedMove
+            self.eMngr.addEvent(EventPlayerMove(player, proposedMove))
         # orientate the player
 
     def discreteValue(self, originalValue):

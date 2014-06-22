@@ -3,6 +3,7 @@
 import sys
 import sdl2.ext
 from zgame import Game
+from event_manager import EventManager
 from inputManager import InputManager
 from graphicsManager import GraphicManager
 from updateManager import UpdateManager
@@ -14,16 +15,18 @@ from networkManager import NetworkManager
 def main():
  
     # create the managers
-    gMngr = GraphicManager()
-    iMngr = InputManager(gMngr)
-    uMngr = UpdateManager()
-    sMngr = SoundManager()
-    nMngr = NetworkManager()
+    eMngr = EventManager()
+    gMngr = GraphicManager(eMngr)
+    iMngr = InputManager(eMngr, gMngr)
+    uMngr = UpdateManager(eMngr)
+    sMngr = SoundManager(eMngr)
+    nMngr = NetworkManager(eMngr)
 
     print "starting game"
     # create file with input
     playFile = open(sys.argv[1], 'r')
     # start the managers
+    eMngr.start()
     gMngr.start()
     iMngr.start()
     uMngr.start()
@@ -36,6 +39,7 @@ def main():
     game.run()
 
     # close the managers
+    eMngr.stop()
     uMngr.stop()
     iMngr.stop()
     gMngr.stop()

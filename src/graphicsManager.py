@@ -4,7 +4,8 @@ import sdl2.ext
 
 class GraphicManager(object):
     """handles all graphical parts"""
-    def __init__(self):
+    def __init__(self, eventManager):
+        self.eMngr = eventManager 
         self.RESOURCES = sdl2.ext.Resources("..", "resources")
 
     def drawTest(self):

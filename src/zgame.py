@@ -51,7 +51,7 @@ class Game(object):
                 #self.world.update(newState)
 
             # play sounds
-            self.nMngr.updateGame(self)
+            self.sMngr.updateGame(self)
             # render
             self.gMngr.drawTest2(timeController.left(), self)
             #self.worldView.draw()
