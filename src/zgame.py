@@ -41,7 +41,7 @@ class Game(object):
             self.iMngr.processUserInput(self)
             #isRunning = not self.iMngr.closedGame()
 
-            while timeController.left() > self.S_UPDATE:
+            while timeController.sleep_time() > self.S_UPDATE:
                 #sync with remote
                 self.nMngr.updateGame(self)
 
@@ -53,7 +53,7 @@ class Game(object):
             # play sounds
             self.sMngr.updateGame(self)
             # render
-            self.gMngr.drawTest2(timeController.left(), self)
+            self.gMngr.drawTest2(timeController.sleep_time(), self)
             #self.worldView.draw()
 
             # sleep if necessary

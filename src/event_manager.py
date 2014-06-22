@@ -1,10 +1,15 @@
 import sys
 from player import Player
 
+# used to indentify groups of events
+EVENT_SET_PLAYER = 0
+EVENT_SET_GAME = 2
 
+# used for specific events
 EVENT_TYPE_PLAYER_MOVE = 0
 EVENT_TYPE_PLAYER_REDIRECT = 1
 EVENT_TYPE_GAME_CLOSE = 2
+
 EVENT_TYPES = [EVENT_TYPE_PLAYER_MOVE, EVENT_TYPE_PLAYER_REDIRECT, EVENT_TYPE_GAME_CLOSE]
 
 

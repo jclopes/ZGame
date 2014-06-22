@@ -13,16 +13,11 @@ class Player(object):
     def __init__(self, direction, position):
         self.currentDir = direction
         self.currentPos = position
-        self.proposedDir = None
-        self.proposedMove = (self.MOVE_MIDDLE_VALUE, self.MOVE_MIDDLE_VALUE)
 
     def updatePosition(self, direction, position):
         """Updates position and direction erasing the proposed one if any"""
         self.currentDir = direction
         self.currentPos = position
-        self.proposedDir = None
-        self.proposedPos = None
-        self.proposedMove = (2,2)
 
     def updateStats(self, direction, position):
         # FUTURE to update the status of that player. getting tired etc.

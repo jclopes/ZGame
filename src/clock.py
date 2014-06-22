@@ -17,7 +17,7 @@ class Clock(object):
 
     def sleep(self):
         st = self.sleep_time()
-        print "sleeping %s" % st
+        #print "sleeping %s" % st
         time.sleep(st)
         self.t0 = time.time()
 
