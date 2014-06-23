@@ -4,7 +4,8 @@ import time
 from world import World
 from worldview import WorldView
 from graphicsmanager import GraphicManager
-from player import Player, Direction, Position
+from player import Player, Position
+from direction import Direction
 from clock import Clock
 
 class Game(object):

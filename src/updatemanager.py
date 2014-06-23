@@ -1,5 +1,6 @@
 import sys
-from player import Player, Direction, Position
+from player import Player, Position
+from direction import Direction
 from eventmanager import EventManager, EVENT_SET_PLAYER, EVENT_TYPE_PLAYER_MOVE, EVENT_TYPE_PLAYER_REDIRECT
 
 class UpdateManager(object):
@@ -19,6 +20,7 @@ class UpdateManager(object):
                 event.player.currentPos.applyMove(event.move)
             elif event.type == EVENT_TYPE_PLAYER_REDIRECT:
                 event.player.currentDir = event.direction
+
 
     def start(self):
         pass

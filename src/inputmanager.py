@@ -1,7 +1,8 @@
 import sys
 import sdl2.ext
 from graphicsmanager import GraphicManager
-from player import Player, Direction, Position
+from player import Player, Position
+from direction import Direction
 from eventmanager import EventPlayerMove, EventPlayerDirect
 import pdb
 

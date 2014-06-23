@@ -1,17 +1,39 @@
 import sys
 import sdl2
 import sdl2.ext
+import direction
 
 class GraphicManager(object):
     """handles all graphical parts"""
     def __init__(self, eventManager):
         self.eMngr = eventManager 
         self.RESOURCES = sdl2.ext.Resources("..", "resources")
+        self.playerSubImgPosFromDirection = { 
+            direction.N : 0,
+            direction.NNE : 1,
+            direction.NE : 2,
+            direction.NEE : 3,
+            direction.E : 4,
+            direction.SEE : 5,
+            direction.SE : 6,
+            direction.SSE : 7,
+            direction.S : 8,
+            direction.SSW : 9,
+            direction.SW : 10,
+            direction.SWW : 11,
+            direction.W : 12,
+            direction.NWW : 13,
+            direction.NW : 14,
+            direction.NNW : 15,
+            direction.O : 16 }
 
     def draw(self, leftTime, game):
         factory = sdl2.ext.SpriteFactory(sdl2.ext.SOFTWARE)
         # create a sprite for the player
-        sprite = factory.from_image(self.RESOURCES.get_path("player.bmp"))
+        spriteWholeImage = factory.from_image(self.RESOURCES.get_path("player.bmp"))
+        # get the right piece of the image
+        offset = self.playerSubImgPosFromDirection[game.ownPlayer.currentDir.direction] * 20
+        sprite = spriteWholeImage.subsprite((offset,0,20,20))
         # magenta is set as the transparent color
         colorTransp = sdl2.pixels.SDL_MapRGB(sprite.surface.format,255,0,255)
         sdl2.surface.SDL_SetColorKey(sprite.surface, sdl2.SDL_TRUE, colorTransp)
