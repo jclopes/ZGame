@@ -53,7 +53,7 @@ class Game(object):
             # play sounds
             self.sMngr.updateGame(self)
             # render
-            self.gMngr.drawTest2(timeController.sleep_time(), self)
+            self.gMngr.draw(timeController.sleep_time(), self)
             #self.worldView.draw()
 
             # sleep if necessary
