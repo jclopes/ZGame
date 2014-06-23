@@ -3,7 +3,7 @@ import json
 import time
 from world import World
 from worldview import WorldView
-from graphicsManager import GraphicManager
+from graphicsmanager import GraphicManager
 from player import Player, Direction, Position
 from clock import Clock
 

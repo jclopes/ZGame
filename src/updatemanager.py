@@ -1,6 +1,6 @@
 import sys
 from player import Player, Direction, Position
-from event_manager import EventManager, EVENT_SET_PLAYER, EVENT_TYPE_PLAYER_MOVE, EVENT_TYPE_PLAYER_REDIRECT
+from eventmanager import EventManager, EVENT_SET_PLAYER, EVENT_TYPE_PLAYER_MOVE, EVENT_TYPE_PLAYER_REDIRECT
 
 class UpdateManager(object):
     """updates the game"""

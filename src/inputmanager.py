@@ -1,8 +1,8 @@
 import sys
 import sdl2.ext
-from graphicsManager import GraphicManager
+from graphicsmanager import GraphicManager
 from player import Player, Direction, Position
-from event_manager import EventPlayerMove, EventPlayerDirect
+from eventmanager import EventPlayerMove, EventPlayerDirect
 import pdb
 
 class InputManager(object):

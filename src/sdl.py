@@ -3,12 +3,12 @@
 import sys
 import sdl2.ext
 from zgame import Game
-from event_manager import EventManager
-from inputManager import InputManager
-from graphicsManager import GraphicManager
-from updateManager import UpdateManager
-from soundManager import SoundManager
-from networkManager import NetworkManager
+from eventmanager import EventManager
+from inputmanager import InputManager
+from graphicsmanager import GraphicManager
+from updatemanager import UpdateManager
+from soundmanager import SoundManager
+from networkmanager import NetworkManager
 
 # run in terminal: python sdl.py ../play_file.log 
 
