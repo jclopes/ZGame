@@ -9,12 +9,20 @@ TODO:
   - clients send user input to server
 
 - UI
-  - pick server screen
-  - ...
+  - server selection screen
 
 - Game Logic
-  - event pub/sub comonication between managers
-  - implement user_input events
+  - set right subscriptions to events
+  - implement the input events
+  - direction using vector
+  - collission resolution
+
+- Data model
+  - state basic data model: field, areas, players
+
+- Other
+  - input config file: mapping file from controller to input
+  - pass connection parameters on command line
 
 
 Development Notes:

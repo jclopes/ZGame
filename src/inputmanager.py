@@ -3,7 +3,7 @@ import sdl2.ext
 from graphicsmanager import GraphicManager
 from player import Player, Position
 from direction import Direction
-from eventmanager import EventPlayerMove, EventPlayerDirect
+from eventmanager import EventClassInput
 import pdb
 
 class InputManager(object):
@@ -91,19 +91,16 @@ class InputManager(object):
         if self.movePlayer[0] != self.middlePoint or self.movePlayer[1] != self.middlePoint:
             player = game.ownPlayer
             proposedMove = (self.movePlayer[0], self.movePlayer[1])
-            self.eMngr.publishEvent(EventPlayerMove(player, proposedMove))
+            self.eMngr.publishEvent(EventClassInput(EventClassInput.TYPE_MOVE_DIRECTION, {"player": player, "proposedMove": proposedMove}))
         # orientate the player
         if self.directPlayer[0] != 0 or self.directPlayer[1] != 0: # if there is a position
             player = game.ownPlayer
             proposedDir = Direction((self.directPlayer[0], self.directPlayer[1]))
-            self.eMngr.publishEvent(EventPlayerDirect(player, proposedDir))
+            self.eMngr.publishEvent(EventClassInput(EventClassInput.TYPE_FACE_DIRECTION, {"player": player, "proposedDir": proposedDir}))
 
     def discreteValue(self, originalValue):
         """returns a value from 0 to NUM_DIVISIONS_IN_AXIS not included"""
         return int(round(self.NUM_DIVISIONS_IN_AXIS * (originalValue + 32770) / 65540))
-
-    def onEvent(self, etype, event):
-        raise NotImplemented
 
     def start(self):
         pass
