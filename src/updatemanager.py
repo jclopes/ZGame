@@ -1,26 +1,25 @@
 import sys
 from player import Player, Position
 from direction import Direction
-from eventmanager import EventManager, EVENT_SET_PLAYER, EVENT_TYPE_PLAYER_MOVE, EVENT_TYPE_PLAYER_REDIRECT
+from eventmanager import EventManager, EVENT_TYPE_PLAYER_MOVE, EVENT_TYPE_PLAYER_REDIRECT, EventSubscriber
 
-class UpdateManager(object):
+class UpdateManager(EventSubscriber):
     """updates the game"""
     def __init__(self, eventManager):
         self.eMngr = eventManager 
+        eventManager.subscribe(EVENT_TYPE_PLAYER_MOVE, self)
+        eventManager.subscribe(EVENT_TYPE_PLAYER_REDIRECT, self)
         pass
 
     def updateGame(self, game):
-        # TODO: restrict move to field size and players around
+        # think if there is something to be done here. all should be onEvent instead?
+         pass
 
-        # treat the player events
-        while self.eMngr.existEvent(EVENT_SET_PLAYER):
-            player = game.ownPlayer
-            event = self.eMngr.getEvent(EVENT_SET_PLAYER)
-            if event.type == EVENT_TYPE_PLAYER_MOVE:
-                event.player.currentPos.applyMove(event.move)
-            elif event.type == EVENT_TYPE_PLAYER_REDIRECT:
-                event.player.currentDir = event.direction
-
+    def onEvent(self, etype, event):
+        if (etype == EVENT_TYPE_PLAYER_MOVE):
+            event.player.currentPos.applyMove(event.move)
+        elif (etype == EVENT_TYPE_PLAYER_MOVE):
+            event.player.currentDir = event.direction
 
     def start(self):
         pass
