@@ -24,7 +24,7 @@ class Game(object):
         self.nMngr = networkManager
         self.connection = filedesc
         self.isRunning = True
-        self.ownPlayer = Player(Direction((2,0)), Position(50, 50))
+        self.ownPlayer = Player(Direction((2,0)), Position(50, 50),Direction((2,0)))
 
     def run(self):
         """Method that starts the game running."""

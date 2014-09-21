@@ -1,36 +1,34 @@
-
-NUM_DIVISIONS_IN_AXIS = 5
-MOVE_MIDDLE_VALUE = 2
-
+import math
+from direction import Direction
 
 class Player(object):
     """represents a player of the game. not the user"""
 
-    # up is forward, down backwards. matrix represents amount of move
-    move_matrix = [ [1,1,4,1,1],
-                    [1,1,4,1,1],
-                    [1,1,0,1,1],
-                    [1,1,1,1,1],
-                    [1,1,1,1,1]]
 
-    def __init__(self, direction, position):
-        self.currentDir = direction
-        self.currentPos = position
+    FACE_MOVE_RATIO = 0.5
 
-    def updatePosition(self, direction, position):
-        """Updates position and direction erasing the proposed one if any"""
-        self.currentDir = direction
-        self.currentPos = position
+    def __init__(self, moveDirection, position, faceDirection):
+        self.moveDirection = moveDirection
+        self.moveSpeed = 0
+        self.position = position
+        self.faceDirection = faceDirection
 
-    def updateStats(self, direction, position):
-        # FUTURE to update the status of that player. getting tired etc.
-        pass
+    def getNextPosition(self):
+        """given the current data, calculates where the player would end up"""
+        if (self.moveDirection.direction == Direction.O): #The player is not moving
+            newPosX = self.position.x
+            newPosY = self.position.y
+        else: #the player is moving
+            #calculate what would be the normal move for X and Y
+            normalX = math.cos(self.moveDirection.getAngle()) * self.moveSpeed
+            normalY = math.sin(self.moveDirection.getAngle()) * self.moveSpeed
+            additionX = math.cos(self.faceDirection.getAngle()) * self.moveSpeed * self.FACE_MOVE_RATIO
+            additionY = math.sin(self.faceDirection.getAngle()) * self.moveSpeed * self.FACE_MOVE_RATIO
+            #calculate final position
+            newPosX = self.position.x + int(math.floor(normalX + additionX))
+            newPosY = self.position.y + int(math.floor(normalY + additionY))
+        return Position(newPosX, newPosY) # TODO should return based on BOTH directions
 
-    def proposeMove(self, direction, position):
-        """Proposes a move for the player"""
-        self.proposedDir = direction
-        self.proposedPos = position
-        
 
 class Position(object):
     """represents a position in the field"""
@@ -50,14 +48,3 @@ class Position(object):
         # apply move
         self.x += movex - 2
         self.y += movey - 2
-
-    def moveTo(self, direction):
-        if direction == Direction.UP:
-            self.y -= self.STEP
-        elif direction == Direction.DOWN:
-            self.y += self.STEP
-        elif direction == Direction.LEFT:
-            self.x -= self.STEP
-        elif direction == Direction.RIGHT:
-            self.x += self.STEP
-

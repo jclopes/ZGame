@@ -13,8 +13,6 @@ TODO:
 
 - Game Logic
   - set right subscriptions to events
-  - implement the input events
-  - direction using vector
   - collission resolution
 
 - Data model
