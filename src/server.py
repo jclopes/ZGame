@@ -189,7 +189,7 @@ def main():
         # send game state to all clients
         cliMngr.broadcast(state)
         # read clients input while we can
-        timeout = clock.sleep_time()
+        timeout = clock.time_left()
         cliMngr.read_incoming_msgs(timeout)
         # drop clients that are not responsive
         cliMngr.check_clients_liveness()
