@@ -1,5 +1,6 @@
 import struct
 import socket
+import select
 
 #
 # This file contains constants and message definitions for the network protocol
@@ -90,3 +91,36 @@ def receive_msg(sock, fromAddr=None):
         return None, None
 
     return buff, addr
+
+
+def cli_connect_req(sock, srvAddr):
+    """Establish a connection to the game server."""
+    msg = message_connect()
+    sock.sendto(msg, srvAddr)
+
+
+def cli_recv(sock):
+    """Asynchronous read of the socket and unpacks the message.
+    Returns 'None' if the socket is not ready otherwise returns a dict with
+    the content of the message.
+    """
+    r, _w, _e = select.select([sock], [], [], 0)
+    if not sock in r:
+        return None
+
+    buff, addr = sock.recvfrom(MSG_MAX_SIZE)
+    header = buff[:MSG_HEADER_SIZE]
+    data = buff[MSG_HEADER_SIZE:]
+    protoVerId, msgType, msgId = struct.unpack('!BBH', header)
+
+    msg = dict()
+    msg['type'] = msgType
+    msg['id'] = msgId
+    msg['data'] = data
+    msg['addr'] = addr
+    return msg
+
+
+def cli_socket():
+    """Creates a socket to be used by the client to connect to the server."""
+    return socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
