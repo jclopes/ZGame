@@ -16,18 +16,19 @@ class Clock(object):
         self.t0 = time.time()
 
     def sleep(self):
-        st = self.sleep_time()
-        #print "sleeping %s" % st
-        time.sleep(st)
+        time.sleep(self.time_left())
         self.t0 = time.time()
 
-    def sleep_time(self):
+    def time_left(self):
         res = 0.0
         t1 = time.time()
         td = t1 - self.t0
         if td < self.frametime:
             res = (self.frametime - td)
         return res
+
+    def time_passed(self):
+        return time.time() - self.t0
 
     def reset(self):
         self.start()
