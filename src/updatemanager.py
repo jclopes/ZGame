@@ -6,7 +6,7 @@ from eventmanager import EventManager, EVENT_CLASS_INPUT, EVENT_CLASS_SERVER, Ev
 class UpdateManager(EventSubscriber):
     """updates the game"""
     def __init__(self, eventManager):
-        self.eMngr = eventManager 
+        self.eMngr = eventManager
         eventManager.subscribe(EVENT_CLASS_INPUT, self)
         eventManager.subscribe(EVENT_CLASS_SERVER, self)
         self.inputEvents = list()
@@ -39,7 +39,8 @@ class UpdateManager(EventSubscriber):
             numEvents -= 1
             pass
 
-    def onEvent(self, eclass, event):
+    def onEvent(self, event):
+        eclass = event.get_class()
         # TODO store Input events instead of processing them
         if (eclass == EVENT_CLASS_INPUT):
             self.inputEvents.append(event)
