@@ -1,14 +1,14 @@
 import sys
 from player import Player, Position
 from direction import Direction
-from eventmanager import EventManager, EVENT_CLASS_INPUT, EVENT_CLASS_SERVER, EventSubscriber, EventClassInput
+from eventmanager import EventManager, EVENT_CLASS_INPUT, EVENT_CLASS_NETWORK, EventSubscriber, EventClassInput
 
 class UpdateManager(EventSubscriber):
     """updates the game"""
     def __init__(self, eventManager):
         self.eMngr = eventManager
         eventManager.subscribe(EVENT_CLASS_INPUT, self)
-        eventManager.subscribe(EVENT_CLASS_SERVER, self)
+        eventManager.subscribe(EVENT_CLASS_NETWORK, self)
         self.inputEvents = list()
         self.serverEvents = list()
 
@@ -44,7 +44,7 @@ class UpdateManager(EventSubscriber):
         # TODO store Input events instead of processing them
         if (eclass == EVENT_CLASS_INPUT):
             self.inputEvents.append(event)
-        elif (eclass == EVENT_CLASS_SERVER):
+        elif (eclass == EVENT_CLASS_NETWORK):
             self.serverEvents.append(event)
 
     def start(self):
