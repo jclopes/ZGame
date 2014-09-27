@@ -24,6 +24,7 @@ MSGT_GAMESTATE = 2  # message type for game state
 MSGT_CONNECTREQ = 3  # client request to connect to server
 MSGT_CONNECTACPT = 4  # response to client connection request
 MSGT_HEARTBEAT = 5  # response to client connection request
+MSGT_CLI_EVENT = 6  # message type for client action
 
 
 def message_accept(srvPort):
@@ -45,9 +46,20 @@ def message_accept(srvPort):
 
 
 def message_state(msgId, payload):
+    """Sent from the server to the client every frame."""
     msg = bytearray()
     # Header
     msg.extend(struct.pack('!BBH', PROTOCOL_VERSIONID, MSGT_GAMESTATE, msgId))
+    # Payload
+    msg.extend(payload)
+    return msg
+
+
+def message_action(msgId, payload):
+    """Sent from the client to the server for every input action."""
+    msg = bytearray()
+    # Header
+    msg.extend(struct.pack('!BBH', PROTOCOL_VERSIONID, MSGT_CLI_EVENT, msgId))
     # Payload
     msg.extend(payload)
     return msg
@@ -93,6 +105,13 @@ def receive_msg(sock, fromAddr=None):
     return buff, addr
 
 
+def cli_socket():
+    """Creates a socket to be used by the client to connect to the server."""
+    sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+    sock.setblocking(0)
+    return sock
+
+
 def cli_connect_req(sock, srvAddr):
     """Establish a connection to the game server."""
     msg = message_connect()
@@ -121,6 +140,14 @@ def cli_recv(sock):
     return msg
 
 
-def cli_socket():
-    """Creates a socket to be used by the client to connect to the server."""
-    return socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+def cli_send(sock, msg, srvAddr):
+    """Asynchronous send to server.
+    Returns 'None' if the socket is not ready otherwise returns an int with
+    the return value of the call to socket.sento().
+    """
+    _r, w, _e = select.select([], [sock], [], 0)
+    if not sock in w:
+        return None
+
+    res = sock.sendto(msg, srvAddr)
+    return res
