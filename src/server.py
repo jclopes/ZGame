@@ -21,6 +21,7 @@ MAX_CLIENTS = 10
 
 
 class ClientProxy():
+    CLIENT_TIMEOUT = 5  # seconds
     def __init__(self, cliAddr, cliId):
         self.addr = cliAddr
         self.cliId = cliId
@@ -32,6 +33,7 @@ class ClientProxy():
         self.lastHbt = 0
         self.lag = 0
         self.msg_metrics = {}  # keep track of RoudTripTime
+        self.time_passed = 0.0  # seconds since last msg was received
 
     def send_state(self, data):
         self.msgId += 1
@@ -47,25 +49,29 @@ class ClientProxy():
     def receive(self):
         while True:
             buff, addr = receive_msg(self.sock, self.addr)
-            print "receive msg: addr=%s buff=%s" % (buff, addr)
             if addr is None:
+                print "."
                 break
             if (addr != self.addr):
                 print "Wrong address!"
                 break
             else:
+                print "receive msg: addr=%s buff=%s" % (addr, buff)
                 msgType, msgId = unpack_header(buff)
                 if msgType == MSGT_HEARTBEAT:
                     self.lastHbt = msgId
                     self.mesure_lag(msgId)
+                self.time_passed = 0.0
 
     def mesure_lag(self, msgId):
         t1 = time.time()
         if msgId in self.msg_metrics:
             self.lag = t1 - self.msg_metrics.pop(msgId)
 
-    def is_alive(self):
-        return (self.msgId - self.lastHbt) < 10
+    def is_alive(self, time_passed):
+        self.time_passed += time_passed
+        print "ClientProxy time_passed=%s" % self.time_passed
+        return (self.time_passed <= self.CLIENT_TIMEOUT)
 
     def disconnect(self):
         self.sock.close()
@@ -124,12 +130,12 @@ class ClientManager(object):
         cli.disconnect()
         self.clients[cliId] = None
 
-    def check_clients_liveness(self):
+    def check_clients_liveness(self, time_passed):
         """Check if the clients are responsive."""
         for c in self.clients:
             cli = self.get_cli(c)
             if cli is not None:
-                if not cli.is_alive():
+                if not cli.is_alive(time_passed):
                     print "Lost client %s" % c
                     self.remove(c)
 
@@ -192,7 +198,9 @@ def main():
         timeout = clock.time_left()
         cliMngr.read_incoming_msgs(timeout)
         # drop clients that are not responsive
-        cliMngr.check_clients_liveness()
+        ctp = clock.time_passed()
+        print "time time_passed = %s" % ctp
+        cliMngr.check_clients_liveness(ctp)
 
         clock.sleep()
 
