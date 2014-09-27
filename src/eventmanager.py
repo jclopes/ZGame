@@ -46,8 +46,12 @@ class EventManager(object):
 class EventSubscriber(object):
     """Interface that all event subscribers must implement."""
 
+    def __init__(self):
+        super(EventSubscriber, self).__init__()
+        self.eQueue = list()
+
     def onEvent(self, event):
-        raise NotImplemented
+        self.eQueue.append(event)
 
 
 class Event(object):
@@ -90,7 +94,7 @@ class EventClassNetwork(Event):
     TYPE_EXIT = 5
 
     def __init__(self, etype, properties):
-        super(EventClassNetwork, self).__init__(EVENT_CLASS_INPUT)
+        super(EventClassNetwork, self).__init__(EVENT_CLASS_NETWORK)
         self.etype = etype
         self.properties = properties
 
