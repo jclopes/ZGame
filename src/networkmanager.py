@@ -18,7 +18,7 @@ class NetworkManager(EventSubscriber):
     """
     STATE_DISCONNECTED = 0
     STATE_CONNECTED = 1
-    STATE_CON_REQUEST = 2
+    STATE_CONN_WAIT = 2
 
     REQ_TIMEOUT_MS = 0.1
     HEARTBEAT_INTERVAL = 0.5  # seconds
@@ -41,47 +41,53 @@ class NetworkManager(EventSubscriber):
         if self.state == self.STATE_DISCONNECTED:
             log.info("NM: ERROR: No connection to Server. need to call start().")
 
-        if self.state == self.STATE_CON_REQUEST:
-            msg = cli_recv(self.sock)
-            if msg is None:
-                if self.timePassed > self.REQ_TIMEOUT_MS:
-                    if self.conn_retries == 0:
-                        raise Exception('CRITICAL: Server not responding.')
-                    log.info("NM: retrying connection.")
-                    cli_connect_req(self.sock, self.srvAddr)
-                    self.timePassed = 0
-                    self.conn_retries -= 1
-            elif msg['type'] == MSGT_CONNECTACPT:
-                log.info("NM: Connected to server.")
-                self.srvAddr = msg['addr']
-                self.timePassed = 0
-                self.state = self.STATE_CONNECTED
-                connectedEvent = EventClassNetwork(
-                    EventClassNetwork.TYPE_CONNECTED, None
-                )
-                self.eMngr.publishEvent(connectedEvent)
-            else:
-                log.info("NM: ERROR: unexpected message.")
+        if self.state == self.STATE_CONN_WAIT:
+            self._update_conn_wait()
 
         elif self.state == self.STATE_CONNECTED:
-            self.processEvents()
-            # Get all messages from the server
+            self._update_connected()
+
+    def _update_conn_wait(self):
+        msg = cli_recv(self.sock)
+        if msg is None:
+            if self.timePassed > self.REQ_TIMEOUT_MS:
+                if self.conn_retries == 0:
+                    raise Exception('CRITICAL: Server not responding.')
+                log.info("NM: retrying connection.")
+                cli_connect_req(self.sock, self.srvAddr)
+                self.timePassed = 0
+                self.conn_retries -= 1
+        elif msg['type'] == MSGT_CONNECTACPT:
+            log.info("NM: Connected to server.")
+            self.srvAddr = msg['addr']
+            self.timePassed = 0
+            self.state = self.STATE_CONNECTED
+            connectedEvent = EventClassNetwork(
+                EventClassNetwork.TYPE_CONNECTED, None
+            )
+            self.eMngr.publishEvent(connectedEvent)
+        else:
+            log.info("NM: ERROR: unexpected message.")
+
+    def _update_connected(self):
+        self.processEvents()
+        # Get all messages from the server
+        msg = cli_recv(self.sock)
+        while (msg is not None):
+            if msg['type'] == MSGT_GAMESTATE:
+                # TODO: umpack world state and events
+                if msg['id'] > self.msgCounter + 1:
+                    # Not the message we were expecting
+                    # TODO: use logging
+                    log.info("NM: WANING: package loss: %s" % (msg['id'] - self.msgCounter))
+                # update message counter
+                self.msgCounter = msg['id']
+                self.timePassed = 0
+                log.debug("%s" % msg)
+                # TODO: Process server message
+                # TODO: emit events to update world and event queue
+            # Get the next message
             msg = cli_recv(self.sock)
-            while (msg is not None):
-                if msg['type'] == MSGT_GAMESTATE:
-                    # TODO: umpack world state and events
-                    if msg['id'] > self.msgCounter + 1:
-                        # Not the message we were expecting
-                        # TODO: use logging
-                        log.info("NM: WANING: package loss: %s" % (msg['id'] - self.msgCounter))
-                    # update message counter
-                    self.msgCounter = msg['id']
-                    self.timePassed = 0
-                    log.debug("%s" % msg)
-                    # TODO: Process server message
-                    # TODO: emit events to update world and event queue
-                # Get the next message
-                msg = cli_recv(self.sock)
 
     def processEvents(self):
         """Processes the events in FIFO order."""
@@ -108,7 +114,7 @@ class NetworkManager(EventSubscriber):
         self.srvAddr = (srvAddr, srvPort)
         cli_connect_req(self.sock, self.srvAddr)
         self.msgCounter = 1
-        self.state = self.STATE_CON_REQUEST
+        self.state = self.STATE_CONN_WAIT
         self.eMngr.subscribe(EVENT_CLASS_INPUT, self)
 
     def stop(self):
